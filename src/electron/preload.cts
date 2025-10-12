@@ -1,14 +1,10 @@
 const electron = require("electron");
 
 electron.contextBridge.exposeInMainWorld("electron", {
-  subscribeStatistics: (callback) => {
-    ipcOn(
-      "statistics",
-      (stats: Statistics) => {
-        callback(stats);
-      }
-    );
-  },
+  subscribeStatistics: (callback) =>
+    ipcOn("statistics", (stats: Statistics) => {
+      callback(stats);
+    }),
   getStaticData: () => ipcInvoke("getStaticData"),
 } satisfies Window["electron"]);
 
@@ -22,9 +18,10 @@ function ipcOn<key extends keyof EventPayloadMapping>(
   key: key,
   callback: (payload: EventPayloadMapping[key]) => void
 ) {
-  electron.ipcRenderer.on(
-    key,
-    (_: Electron.IpcRendererEvent, payload: EventPayloadMapping[key]) =>
-      callback(payload)
-  );
+  const cb = (
+    _: Electron.IpcRendererEvent,
+    payload: EventPayloadMapping[key]
+  ) => callback(payload);
+  electron.ipcRenderer.on(key, cb);
+  return () => electron.ipcRenderer.off(key, cb);
 }
