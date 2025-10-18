@@ -71,3 +71,6 @@ export default defineConfig([
   },
 ])
 ```
+
+icon: Flaticon.com
+`https://www.flaticon.com/free-icon/analytics_6465583?term=monitoring&page=1&position=6&origin=search&related_id=6465583`
